@@ -68,201 +68,273 @@
           opacity: 0;
         }
       }
+
+      /* LOCK SCREEN STYLES */
+      #lockScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #eff6ff;
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.5s ease;
+      }
+
+      #mainContent {
+        opacity: 0;
+        transition: opacity 1s ease;
+      }
     </style>
   </head>
   <body class="min-h-screen flex items-center justify-center p-4 relative">
-    <!-- Background Hearts -->
-    <div class="heart-bg" id="heartBg"></div>
-
-    <!-- Main Container -->
-    <div
-      class="bg-white/90 backdrop-blur-sm w-full max-w-md h-[85vh] rounded-3xl shadow-2xl overflow-hidden relative border border-blue-200 z-10 flex flex-col"
-    >
-      <!-- Progress Bar -->
-      <div class="w-full bg-blue-100 h-2">
-        <div
-          id="progressBar"
-          class="bg-blue-600 h-2 transition-all duration-500"
-          style="width: 20%"
-        ></div>
-      </div>
-
-      <!-- PAGE 1: Intro -->
+    <!-- === LOCK SCREEN === -->
+    <div id="lockScreen">
       <div
-        id="page1"
-        class="page active flex-col items-center justify-center h-full p-6 text-center relative"
+        class="bg-white p-8 rounded-2xl shadow-xl text-center max-w-xs w-full border border-blue-200"
       >
-        <div class="mb-6 text-blue-600 text-6xl animate-bounce">
-          <i class="fa-solid fa-envelope-open-text"></i>
+        <div class="text-blue-500 text-4xl mb-4">
+          <i class="fa-solid fa-lock"></i>
         </div>
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">Hi Sweta</h1>
+        <h2 class="text-xl font-bold text-gray-700 mb-2">Locked</h2>
+        <p class="text-gray-500 text-sm mb-4">Enter the code to.</p>
+
+        <input
+          type="password"
+          id="passInput"
+          placeholder="Code..."
+          class="w-full px-4 py-2 rounded-lg border border-blue-200 focus:outline-none focus:border-blue-500 mb-4 text-center"
+        />
 
         <button
-          onclick="nextPage(2)"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
+          onclick="checkPassword()"
+          class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition"
         >
-          Next <i class="fa-solid fa-arrow-right ml-2"></i>
+          Unlock
         </button>
-      </div>
-
-      <!-- PAGE 2: The Feelings -->
-      <div
-        id="page2"
-        class="page flex-col items-center justify-center h-full p-6 text-center relative"
-      >
-        <h2 class="text-2xl font-bold text-blue-700 mb-6 cursive">
-          Just a few things...
-        </h2>
-        <div
-          class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 overflow-y-auto max-h-[50vh]"
-        >
-          <p class="text-lg text-center mt-4">
-            I take a little time to understand people and situations properly.
-            Sometimes I miss things at first, but I’m learning and trying to get
-            better at it.
-          </p>
-          <p class="text-lg text-center mt-4">
-            I value honesty and being myself rather than acting a certain way to
-            fit in. I’m learning how to keep have proper boundaries as well tho
-            I don’t always get it right, but I do try to learn from it.
-          </p>
-        </div>
-
-        <div class="flex gap-4">
-          <button
-            onclick="prevPage(1)"
-            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
-          >
-            Back
-          </button>
-          <button
-            onclick="nextPage(3)"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
-          >
-            Continue <i class="fa-solid fa-heart ml-2"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- PAGE 3: The Photo -->
-      <div
-        id="page3"
-        class="page flex-col items-center justify-center h-full p-6 text-center relative"
-      >
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">Stupid me 👇</h2>
-
-        <div
-          class="relative w-64 h-64 mx-auto mb-6 rounded-2xl overflow-hidden shadow-xl border-4 border-white rotate-3 hover:rotate-0 transition-transform duration-500"
-        >
-          <img
-            src="https://github.com/meet-afk/meet-afk.github.io/blob/main/Assets/pfp/me.jpg?raw=true"
-            alt="Us"
-            class="w-full h-full object-cover"
-          />
-        </div>
-
-        <p class="text-gray-600 mb-8 px-4">
-          This is how I look most days unless it’s Sunday and I’ve washed my
-          hair 😭.
+        <p id="errorMsg" class="text-red-500 text-xs mt-2 hidden">
+          Wrong code, try again.
         </p>
+      </div>
+    </div>
 
-        <div class="flex gap-4">
+    <!-- === MAIN CONTENT (Initially Hidden) === -->
+    <div id="mainContent" class="w-full flex items-center justify-center">
+      <!-- Background Hearts -->
+      <div class="heart-bg" id="heartBg"></div>
+
+      <!-- Main Container -->
+      <div
+        class="bg-white/90 backdrop-blur-sm w-full max-w-md h-[85vh] rounded-3xl shadow-2xl overflow-hidden relative border border-blue-200 z-10 flex flex-col"
+      >
+        <!-- Progress Bar -->
+        <div class="w-full bg-blue-100 h-2">
+          <div
+            id="progressBar"
+            class="bg-blue-600 h-2 transition-all duration-500"
+            style="width: 20%"
+          ></div>
+        </div>
+
+        <!-- PAGE 1: Intro -->
+        <div
+          id="page1"
+          class="page active flex-col items-center justify-center h-full p-6 text-center relative"
+        >
+          <div class="mb-6 text-blue-600 text-6xl animate-bounce">
+            <i class="fa-solid fa-envelope-open-text"></i>
+          </div>
+          <h1 class="text-3xl font-bold text-gray-800 mb-4">Hi Sweta</h1>
+
           <button
-            onclick="prevPage(2)"
-            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
-          >
-            Back
-          </button>
-          <button
-            onclick="nextPage(4)"
+            onclick="nextPage(2)"
             class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
           >
-            More <i class="fa-solid fa-arrow-right ml-2"></i>
+            Next <i class="fa-solid fa-arrow-right ml-2"></i>
           </button>
         </div>
-      </div>
 
-      <!-- PAGE 4: Extra Message (NEW PAGE) -->
-      <div
-        id="page4"
-        class="page flex-col items-center justify-center h-full p-6 text-center relative"
-      >
-        <h2 class="text-2xl font-bold text-blue-700 mb-6 cursive">
-          And also...
-        </h2>
+        <!-- PAGE 2: The Feelings -->
         <div
-          class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 overflow-y-auto max-h-[50vh]"
+          id="page2"
+          class="page flex-col items-center justify-center h-full p-6 text-center relative"
         >
-          <p class="text-lg text-center mt-4">
-            I really like talking to you. Even when we end up arguing (which is
-            mostly me ~ proudly said), it’s still fun.
-          </p>
+          <h2 class="text-2xl font-bold text-blue-700 mb-6 cursive">
+            Just a few things...
+          </h2>
+          <div
+            class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 overflow-y-auto max-h-[50vh]"
+          >
+            <p class="text-lg text-center mt-4">
+              I take a little time to understand people and situations properly.
+              Sometimes I miss things at first, but I’m learning and trying to
+              get better at it.
+            </p>
+            <p class="text-lg text-center mt-4">
+              I value honesty and being myself rather than acting a certain way
+              to fit in. I’m learning how to keep have proper boundaries as well
+              tho I don’t always get it right, but I do try to learn from it.
+            </p>
+          </div>
 
-          <p class="text-lg text-center mt-4">
-            I’d love to know you better, the good parts, the bad parts, and even
-            the extreme ones. No pressure, of course.
-          </p>
-
-          <p class="text-lg text-center mt-4">
-            I just want to say that I really like you, not to keep you around,
-            not out of fear of losing you. I genuinely do.
-          </p>
+          <div class="flex gap-4">
+            <button
+              onclick="prevPage(1)"
+              class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
+            >
+              Back
+            </button>
+            <button
+              onclick="nextPage(3)"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
+            >
+              Continue <i class="fa-solid fa-heart ml-2"></i>
+            </button>
+          </div>
         </div>
 
-        <div class="flex gap-4">
-          <button
-            onclick="prevPage(3)"
-            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
-          >
-            Back
-          </button>
-          <button
-            onclick="nextPage(5)"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
-          >
-            One last thing <i class="fa-solid fa-star ml-2"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- PAGE 5: The Question (Formerly Page 4) -->
-      <div
-        id="page5"
-        class="page flex-col items-center justify-center h-full p-6 text-center relative"
-      >
-        <h1
-          class="text-3xl font-bold text-blue-700 mb-6 cursive leading-relaxed"
-        ></h1>
-
-        <!-- Paragraph Text Box -->
+        <!-- PAGE 3: The Photo -->
         <div
-          class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 w-full"
+          id="page3"
+          class="page flex-col items-center justify-center h-full p-6 text-center relative"
         >
-          <p class="mb-2"></p>
-          <p class="text-lg text-center mt-4">
-            I’m not asking you to decide anything right now. I just wanted you
-            to know me properly, without assumptions or surprises. If you feel
-            like talking about this, you can tell me whenever you want. If not,
-            that’s okay too.
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">Stupid me 👇</h2>
+
+          <div
+            class="relative w-64 h-64 mx-auto mb-6 rounded-2xl overflow-hidden shadow-xl border-4 border-white rotate-3 hover:rotate-0 transition-transform duration-500"
+          >
+            <img
+              src="https://github.com/meet-afk/meet-afk.github.io/blob/main/Assets/pfp/me.jpg?raw=true"
+              alt="Us"
+              class="w-full h-full object-cover"
+            />
+          </div>
+
+          <p class="text-gray-600 mb-8 px-4">
+            This is how I look most days unless it’s Sunday and I’ve washed my
+            hair 😭.
           </p>
+
+          <div class="flex gap-4">
+            <button
+              onclick="prevPage(2)"
+              class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
+            >
+              Back
+            </button>
+            <button
+              onclick="nextPage(4)"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
+            >
+              More <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+          </div>
         </div>
 
-        <div class="flex gap-4">
-          <button
-            onclick="prevPage(4)"
-            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
+        <!-- PAGE 4: Extra Message (NEW PAGE) -->
+        <div
+          id="page4"
+          class="page flex-col items-center justify-center h-full p-6 text-center relative"
+        >
+          <h2 class="text-2xl font-bold text-blue-700 mb-6 cursive">
+            And also...
+          </h2>
+          <div
+            class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 overflow-y-auto max-h-[50vh]"
           >
-            Back
-          </button>
-          <!-- No forward button, as this is the end -->
+            <p class="text-lg text-center mt-4">
+              I really like talking to you. Even when we end up arguing (which
+              is mostly me ~ proudly said), it’s still fun.
+            </p>
+            <p class="text-lg text-center mt-4">
+              I’d love to know you better, the good parts, the bad parts, and
+              even the extreme ones. No pressure, of course.
+            </p>
+            <p class="text-lg text-center mt-4">
+              I just want to say that I really like you, not to keep you around,
+              not out of fear of losing you. I genuinely do.
+            </p>
+          </div>
+
+          <div class="flex gap-4">
+            <button
+              onclick="prevPage(3)"
+              class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
+            >
+              Back
+            </button>
+            <button
+              onclick="nextPage(5)"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
+            >
+              One last thing <i class="fa-solid fa-star ml-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- PAGE 5: The Question (Final Page) -->
+        <div
+          id="page5"
+          class="page flex-col items-center justify-center h-full p-6 text-center relative"
+        >
+          <!-- Paragraph Text Box -->
+          <div
+            class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 w-full"
+          >
+            <p class="text-lg text-center mt-4">
+              I’m not asking you to decide anything right now. I just wanted you
+              to know me properly, without assumptions or surprises. If you feel
+              like talking about this, you can tell me whenever you want. If
+              not, that’s okay too.
+            </p>
+          </div>
+
+          <div class="flex gap-4">
+            <button
+              onclick="prevPage(4)"
+              class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
+            >
+              Back
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
     <script>
+      // === CONFIGURATION ===
+      const PASS_CODE = "110125"; // CHANGE THIS to whatever password you want her to use
+
       // STATE
       let currentPage = 1;
-      const totalPages = 5; // Updated to 5 pages
+      const totalPages = 5;
+
+      // === PASSWORD LOGIC ===
+      function checkPassword() {
+        const input = document.getElementById("passInput");
+        const lockScreen = document.getElementById("lockScreen");
+        const mainContent = document.getElementById("mainContent");
+        const errorMsg = document.getElementById("errorMsg");
+
+        if (input.value === PASS_CODE) {
+          // Unlock
+          lockScreen.style.opacity = "0";
+          setTimeout(() => {
+            lockScreen.style.display = "none";
+            mainContent.style.opacity = "1";
+            createHearts(); // Start animation only after unlock
+          }, 500);
+        } else {
+          // Wrong password
+          errorMsg.classList.remove("hidden");
+          input.classList.add("border-red-500");
+          input.value = "";
+        }
+      }
 
       // ANIMATION BACKGROUND
       function createHearts() {
@@ -321,8 +393,8 @@
 
       // INITIALIZATION
       window.onload = () => {
-        createHearts();
         updateProgress();
+        // Note: createHearts() is now called inside checkPassword() so it starts only after unlock
       };
     </script>
   </body>
