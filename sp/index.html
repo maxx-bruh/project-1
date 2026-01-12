@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>For You</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Nunito:wght@400;600;700&display=swap");
+
+      body {
+        font-family: "Nunito", sans-serif;
+        background-color: #eff6ff; /* Blue-50 */
+        overflow-x: hidden;
+      }
+
+      .cursive {
+        font-family: "Dancing Script", cursive;
+      }
+
+      .page {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+      }
+
+      .page.active {
+        display: flex;
+        opacity: 1;
+      }
+
+      /* Floating hearts animation background */
+      .heart-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .floating-heart {
+        position: absolute;
+        bottom: -20px;
+        color: rgba(59, 130, 246, 0.2); /* Blue tint */
+        animation: floatUp 15s linear infinite;
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-4 relative">
+    <!-- Background Hearts -->
+    <div class="heart-bg" id="heartBg"></div>
+
+    <!-- Main Container -->
+    <div
+      class="bg-white/90 backdrop-blur-sm w-full max-w-md h-[85vh] rounded-3xl shadow-2xl overflow-hidden relative border border-blue-200 z-10 flex flex-col"
+    >
+      <!-- Progress Bar -->
+      <div class="w-full bg-blue-100 h-2">
+        <div
+          id="progressBar"
+          class="bg-blue-600 h-2 transition-all duration-500"
+          style="width: 20%"
+        ></div>
+      </div>
+
+      <!-- PAGE 1: Intro -->
+      <div
+        id="page1"
+        class="page active flex-col items-center justify-center h-full p-6 text-center relative"
+      >
+        <div class="mb-6 text-blue-600 text-6xl animate-bounce">
+          <i class="fa-solid fa-envelope-open-text"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">Hi Sweta</h1>
+
+        <button
+          onclick="nextPage(2)"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
+        >
+          Next <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+
+      <!-- PAGE 2: The Feelings -->
+      <div
+        id="page2"
+        class="page flex-col items-center justify-center h-full p-6 text-center relative"
+      >
+        <h2 class="text-2xl font-bold text-blue-700 mb-6 cursive">
+          Just a few things...
+        </h2>
+        <div
+          class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 overflow-y-auto max-h-[50vh]"
+        >
+          <p class="text-lg text-center mt-4">
+            I take a little time to understand people and situations properly.
+            Sometimes I miss things at first, but I’m learning and trying to get
+            better at it.
+          </p>
+          <p class="text-lg text-center mt-4">
+            I value honesty and being myself rather than acting a certain way to
+            fit in. I’m learning how to keep have proper boundaries as well tho
+            I don’t always get it right, but I do try to learn from it.
+          </p>
+        </div>
+
+        <div class="flex gap-4">
+          <button
+            onclick="prevPage(1)"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
+          >
+            Back
+          </button>
+          <button
+            onclick="nextPage(3)"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
+          >
+            Continue <i class="fa-solid fa-heart ml-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- PAGE 3: The Photo -->
+      <div
+        id="page3"
+        class="page flex-col items-center justify-center h-full p-6 text-center relative"
+      >
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Stupid me 👇</h2>
+
+        <div
+          class="relative w-64 h-64 mx-auto mb-6 rounded-2xl overflow-hidden shadow-xl border-4 border-white rotate-3 hover:rotate-0 transition-transform duration-500"
+        >
+          <img
+            src="https://github.com/meet-afk/meet-afk.github.io/blob/main/Assets/pfp/me.jpg?raw=true"
+            alt="Us"
+            class="w-full h-full object-cover"
+          />
+        </div>
+
+        <p class="text-gray-600 mb-8 px-4">
+          This is how I look most days unless it’s Sunday and I’ve washed my
+          hair 😭.
+        </p>
+
+        <div class="flex gap-4">
+          <button
+            onclick="prevPage(2)"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
+          >
+            Back
+          </button>
+          <button
+            onclick="nextPage(4)"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
+          >
+            More <i class="fa-solid fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- PAGE 4: Extra Message (NEW PAGE) -->
+      <div
+        id="page4"
+        class="page flex-col items-center justify-center h-full p-6 text-center relative"
+      >
+        <h2 class="text-2xl font-bold text-blue-700 mb-6 cursive">
+          And also...
+        </h2>
+        <div
+          class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 overflow-y-auto max-h-[50vh]"
+        >
+          <p class="text-lg text-center mt-4">
+            I really like talking to you. Even when we end up arguing (which is
+            mostly me ~ proudly said), it’s still fun.
+          </p>
+
+          <p class="text-lg text-center mt-4">
+            I’d love to know you better, the good parts, the bad parts, and even
+            the extreme ones. No pressure, of course.
+          </p>
+
+          <p class="text-lg text-center mt-4">
+            I just want to say that I really like you, not to keep you around,
+            not out of fear of losing you. I genuinely do.
+          </p>
+        </div>
+
+        <div class="flex gap-4">
+          <button
+            onclick="prevPage(3)"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
+          >
+            Back
+          </button>
+          <button
+            onclick="nextPage(5)"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
+          >
+            One last thing <i class="fa-solid fa-star ml-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- PAGE 5: The Question (Formerly Page 4) -->
+      <div
+        id="page5"
+        class="page flex-col items-center justify-center h-full p-6 text-center relative"
+      >
+        <h1
+          class="text-3xl font-bold text-blue-700 mb-6 cursive leading-relaxed"
+        ></h1>
+
+        <!-- Paragraph Text Box -->
+        <div
+          class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 w-full"
+        >
+          <p class="mb-2"></p>
+          <p class="text-lg text-center mt-4">
+            I’m not asking you to decide anything right now. I just wanted you
+            to know me properly, without assumptions or surprises. If you feel
+            like talking about this, you can tell me whenever you want. If not,
+            that’s okay too.
+          </p>
+        </div>
+
+        <div class="flex gap-4">
+          <button
+            onclick="prevPage(4)"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
+          >
+            Back
+          </button>
+          <!-- No forward button, as this is the end -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // STATE
+      let currentPage = 1;
+      const totalPages = 5; // Updated to 5 pages
+
+      // ANIMATION BACKGROUND
+      function createHearts() {
+        const container = document.getElementById("heartBg");
+        const heartCount = 15;
+        for (let i = 0; i < heartCount; i++) {
+          const heart = document.createElement("div");
+          heart.classList.add("floating-heart");
+          heart.innerHTML = '<i class="fa-solid fa-heart"></i>';
+          heart.style.left = Math.random() * 100 + "vw";
+          heart.style.animationDuration = Math.random() * 10 + 10 + "s";
+          heart.style.fontSize = Math.random() * 20 + 10 + "px";
+          container.appendChild(heart);
+        }
+      }
+
+      // NAVIGATION
+      function updateProgress() {
+        const progress = (currentPage / totalPages) * 100;
+        document.getElementById("progressBar").style.width = `${progress}%`;
+      }
+
+      function nextPage(pageNumber) {
+        const current = document.querySelector(".page.active");
+        current.classList.remove("active");
+
+        setTimeout(() => {
+          current.style.display = "none";
+
+          const next = document.getElementById(`page${pageNumber}`);
+          next.style.display = "flex";
+          void next.offsetWidth;
+          next.classList.add("active");
+
+          currentPage = pageNumber;
+          updateProgress();
+        }, 500);
+      }
+
+      function prevPage(pageNumber) {
+        const current = document.querySelector(".page.active");
+        current.classList.remove("active");
+
+        setTimeout(() => {
+          current.style.display = "none";
+
+          const prev = document.getElementById(`page${pageNumber}`);
+          prev.style.display = "flex";
+          void prev.offsetWidth;
+          prev.classList.add("active");
+
+          currentPage = pageNumber;
+          updateProgress();
+        }, 500);
+      }
+
+      // INITIALIZATION
+      window.onload = () => {
+        createHearts();
+        updateProgress();
+      };
+    </script>
+  </body>
+</html>
