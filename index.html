@@ -1,305 +1,334 @@
-import React, { useState, useEffect } from 'react';
-import { Heart, Mail, MailOpen, X, Calendar, Sparkles, Lock, KeyRound } from 'lucide-react';
-
-// The 30 things you like about her
-const reasons = [
-  "I like how you understand me, from little things to big ones.",
-  "I really like your smile. It's just so calming and cute.",
-  "I like how you are randomly nice to me sometimes, but then you're like \"No I should stay mean\" lol.",
-  "I like that no matter what, whenever we call, you laugh and have fun with me.",
-  "I like your voice. Sometimes I randomly remember you laughing or telling me something, and it just makes me smile.",
-  "I like how you say \"bhak\", \"chhi\" and send those beating stickers, but then also send pats and hugs when I need it the most.",
-  "I like when you worry about me or tell me to do things the right way, even though at the end you say \"anyway it's up to you,\" but it still shows how much you care.",
-  "I like when you try to be expressive, even if it’s just through stickers.",
-  "I like how after a bad day, when I tell you to share things, you say \"no it's nothing,\" but then share it anyway.",
-  "I like how you straight up tell me things that need to be said. I'm trying to do it more and more as well.",
-  "I like how you're always ready to spend time with me.",
-  "I like how mature and straightforward you are.",
-  "I like when you give me small updates about your day/life.",
-  "I like that even when you're so frustrated, you always choose to talk things out instead of staying angy.",
-  "I like how you listen to my opinions about things in your life.",
-  "I like how comfortable I feel talking to you. Whether it’s calls or texts, you make everything feel easy and fun.",
-  "I like that I don’t have to pretend to be someone else around you. I just be myself and say what's in my mind.",
-  "I like how you make normal conversations feel so special.",
-  "I like how talking with you brings a smile to my face. Even right now, while writing this, the thought of you makes me happy.",
-  "I like the way you text when you’re half sleepy. You seem totally normal, but I can just feel like you’re about to say \"I’m gonna sleep, good ninni\" lol.",
-  "I like how you sit through even when I'm being a bit annoying. Tbh it's quite fun to annoy you sometimes.",
-  "I like how you say \"No\" whenever I ask for kisses or Mwah. Love your random reactions.",
-  "I like how even after a bad day, talking with you makes me feel better.",
-  "I like when you bring up those serious conversations when you feel like they are important, and I love how it increases understanding between us.",
-  "I like how you never let me win any argument. Nerd, I'll win one day.",
-  "I like how you’ve become a part of my daily routine, the first person I think about just after waking up.",
-  "I like how you keep your boundaries and respect others' as well.",
-  "I really like how you remember small things about me or something that we talk about. Love it when you mention those.",
-  "I like how time goes super fast when I'm talking with you. Only my mom screaming or dad's side-eye can stop it lol.",
-  "I really like when you tell me that you like me. I know it's just words, but you show it with actions as well. It just feels so genuine, calm, and real."
-];
-
-// Pre-filled "Open When" messages
-const openWhenLetters = [
-  {
-    id: 1,
-    condition: "you're feeling sad",
-    message: "Hey...\n\nI know you'll probably say 'I'm fine', but I can tell when you're not.\n\nDon't try to fix everything right now. Just sit with it for a bit... I'm right here with you.\n\n(And yes, you're getting a hug whether you want it or not 🫂)",
-    color: "bg-blue-50 text-blue-800 border-blue-200"
-  },
-  {
-    id: 2,
-    condition: "you miss me",
-    message: "I know you won't, but if you actually are then damn...\n\nGood. As you should.\n\nOf course... I miss you too, cutiepie.\nCome text me instead of just sitting there thinking 😤",
-    color: "bg-rose-50 text-rose-800 border-rose-200"
-  },
-  {
-    id: 3,
-    condition: "you're stressed",
-    message: "Okay, pause.\n\nBreathe first... not everything needs to be handled in one go.\nThoda sa break le le... the world won't collapse.\n\nAnd if it does... we'll blame you (just kidding!)\n\nRemember, if it's meant to happen, it will happen anyway.",
-    color: "bg-amber-50 text-amber-800 border-amber-200"
-  },
-  {
-    id: 4,
-    condition: "you can't sleep",
-    message: "Why are you still awake bro, go sleep!\n\nOkay fine...\n\nClose your eyes, and stop thinking about 50 random things.\n\nAnd if you're still not sleeping... text me, I'll annoy you till you pass out (believe me 😌)",
-    color: "bg-indigo-50 text-indigo-800 border-indigo-200"
-  },
-  {
-    id: 5,
-    condition: "you're angry at me",
-    message: "Okay... first of all, don't stay angry for too long!\n\nBut also... I get it.\n\nIf I messed up, I'll fix it. Just don't go silent on me... I'd rather we fight a little than feel distant.",
-    color: "bg-red-50 text-red-800 border-red-200"
-  },
-  {
-    id: 6,
-    condition: "you need to smile",
-    message: "SMILE.\n\nIf this didn't make you smile... then I know what will. Remember when I asked what made you happy recently, and you said balloons? 🎈\n\nNow smile.\nYes, right now.\n\nGood. See? Not that hard.",
-    color: "bg-emerald-50 text-emerald-800 border-emerald-200"
-  }
-];
-
-const loadingMessages = [
-  "Gathering all the smiles...",
-  "Increasing cuteness levels...",
-  "Cooking up thoughts...",
-  "Finding the perfect words...",
-  "Packing extra hugs...",
-  "Waking up the butterflies...",
-  "Almost ready..."
-];
-
-export default function App() {
-  // App State
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For You</title>
   
-  const [activeTab, setActiveTab] = useState('reasons');
-  const [selectedLetter, setSelectedLetter] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel to compile JSX in the browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  useEffect(() => {
-    // If not loading anymore, trigger the main page fade-in
-    if (!isLoading) {
-      setTimeout(() => setIsLoaded(true), 100);
-      return;
-    }
+  <!-- Custom Animations to replace Tailwind-Animate plugin -->
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(1rem); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    
+    .animate-fade-in { animation: fadeIn 1s ease-out forwards; }
+    .animate-slide-up { animation: slideUp 0.7s ease-out forwards; }
+    .animate-zoom-in { animation: zoomIn 0.3s ease-out forwards; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
 
-    const duration = 10500; // Increased from 3500 to 10500 (10.5 seconds) so she can read them!
-    const intervalTime = 35; // Update every 35ms
-    const steps = duration / intervalTime;
-    let currentStep = 0;
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-    const timer = setInterval(() => {
-      currentStep++;
-      const currentProgress = Math.min(Math.floor((currentStep / steps) * 100), 100);
-      setLoadingProgress(currentProgress);
+    // --- ICON COMPONENTS ---
+    const Heart = ({ className, size=24 }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>;
+    const Mail = ({ className, size=24 }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>;
+    const MailOpen = ({ className, size=24 }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"/><path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"/></svg>;
+    const X = ({ className, size=24 }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>;
+    const Calendar = ({ className, size=24 }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>;
+    const Sparkles = ({ className, size=24 }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></svg>;
 
-      // Update message based on how far along the progress is
-      const msgIndex = Math.floor((currentProgress / 100) * (loadingMessages.length - 1));
-      setLoadingMessageIndex(msgIndex);
+    // --- DATA ---
+    const reasons = [
+      "I like how you understand me, from little things to big ones.",
+      "I really like your smile. It's just so calming and cute.",
+      "I like how you are randomly nice to me sometimes, but then you're like \"No I should stay mean\" lol.",
+      "I like that no matter what, whenever we call, you laugh and have fun with me.",
+      "I like your voice. Sometimes I randomly remember you laughing or telling me something, and it just makes me smile.",
+      "I like how you say \"bhak\", \"chhi\" and send those beating stickers, but then also send pats and hugs when I need it the most.",
+      "I like when you worry about me or tell me to do things the right way, even though at the end you say \"anyway it's up to you,\" but it still shows how much you care.",
+      "I like when you try to be expressive, even if it’s just through stickers.",
+      "I like how after a bad day, when I tell you to share things, you say \"no it's nothing,\" but then share it anyway.",
+      "I like how you straight up tell me things that need to be said. I'm trying to do it more and more as well.",
+      "I like how you're always ready to spend time with me.",
+      "I like how mature and straightforward you are.",
+      "I like when you give me small updates about your day/life.",
+      "I like that even when you're so frustrated, you always choose to talk things out instead of staying angy.",
+      "I like how you listen to my opinions about things in your life.",
+      "I like how comfortable I feel talking to you. Whether it’s calls or texts, you make everything feel easy and fun.",
+      "I like that I don’t have to pretend to be someone else around you. I just be myself and say what's in my mind.",
+      "I like how you make normal conversations feel so special.",
+      "I like how talking with you brings a smile to my face. Even right now, while writing this, the thought of you makes me happy.",
+      "I like the way you text when you’re half sleepy. You seem totally normal, but I can just feel like you’re about to say \"I’m gonna sleep, good ninni\" lol.",
+      "I like how you sit through even when I'm being a bit annoying. Tbh it's quite fun to annoy you sometimes.",
+      "I like how you say \"No\" whenever I ask for kisses or Mwah. Love your random reactions.",
+      "I like how even after a bad day, talking with you makes me feel better.",
+      "I like when you bring up those serious conversations when you feel like they are important, and I love how it increases understanding between us.",
+      "I like how you never let me win any argument. Nerd, I'll win one day.",
+      "I like how you’ve become a part of my daily routine, the first person I think about just after waking up.",
+      "I like how you keep your boundaries and respect others' as well.",
+      "I really like how you remember small things about me or something that we talk about. Love it when you mention those.",
+      "I like how time goes super fast when I'm talking with you. Only my mom screaming or dad's side-eye can stop it lol.",
+      "I really like when you tell me that you like me. I know it's just words, but you show it with actions as well. It just feels so genuine, calm, and real."
+    ];
 
-      if (currentProgress === 100) {
-        clearInterval(timer);
-        setTimeout(() => setIsLoading(false), 600); // Brief pause at 100%
+    const openWhenLetters = [
+      {
+        id: 1,
+        condition: "you're feeling sad",
+        message: "Hey...\n\nI know you'll probably say 'I'm fine', but I can tell when you're not.\n\nDon't try to fix everything right now. Just sit with it for a bit... I'm right here with you.\n\n(And yes, you're getting a hug whether you want it or not 🫂)",
+        color: "bg-blue-50 text-blue-800 border-blue-200"
+      },
+      {
+        id: 2,
+        condition: "you miss me",
+        message: "I know you won't, but if you actually are then damn...\n\nGood. As you should.\n\nOf course... I miss you too, cutiepie.\nCome text me instead of just sitting there thinking 😤",
+        color: "bg-rose-50 text-rose-800 border-rose-200"
+      },
+      {
+        id: 3,
+        condition: "you're stressed",
+        message: "Okay, pause.\n\nBreathe first... not everything needs to be handled in one go.\nThoda sa break le le... the world won't collapse.\n\nAnd if it does... we'll blame you (just kidding!)\n\nRemember, if it's meant to happen, it will happen anyway.",
+        color: "bg-amber-50 text-amber-800 border-amber-200"
+      },
+      {
+        id: 4,
+        condition: "you can't sleep",
+        message: "Why are you still awake bro, go sleep!\n\nOkay fine...\n\nClose your eyes, and stop thinking about 50 random things.\n\nAnd if you're still not sleeping... text me, I'll annoy you till you pass out (believe me 😌)",
+        color: "bg-indigo-50 text-indigo-800 border-indigo-200"
+      },
+      {
+        id: 5,
+        condition: "you're angry at me",
+        message: "Okay... first of all, don't stay angry for too long!\n\nBut also... I get it.\n\nIf I messed up, I'll fix it. Just don't go silent on me... I'd rather we fight a little than feel distant.",
+        color: "bg-red-50 text-red-800 border-red-200"
+      },
+      {
+        id: 6,
+        condition: "you need to smile",
+        message: "SMILE.\n\nIf this didn't make you smile... then I know what will. Remember when I asked what made you happy recently, and you said balloons? 🎈\n\nNow smile.\nYes, right now.\n\nGood. See? Not that hard.",
+        color: "bg-emerald-50 text-emerald-800 border-emerald-200"
       }
-    }, intervalTime);
+    ];
 
-    return () => clearInterval(timer);
-  }, [isLoading]);
+    const loadingMessages = [
+      "Gathering all the smiles...",
+      "Increasing cuteness levels...",
+      "Cooking up thoughts...",
+      "Finding the perfect words...",
+      "Packing extra hugs...",
+      "Waking up the butterflies...",
+      "Almost ready..."
+    ];
 
-  // --- LOADING SCREEN UI ---
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#faf9f6] flex flex-col items-center justify-center p-4 font-sans">
-        <div className="w-full max-w-xs text-center animate-in fade-in duration-500">
-          <Heart className="w-8 h-8 text-rose-300 mx-auto mb-6 animate-pulse fill-rose-100" />
-          
-          <div className="text-4xl font-serif text-gray-800 mb-2">
-            {loadingProgress}%
-          </div>
-          
-          {/* Progress Bar */}
-          <div className="w-full h-1.5 bg-gray-200 rounded-full mb-6 overflow-hidden">
-            <div 
-              className="h-full bg-rose-400 transition-all duration-75 ease-linear rounded-full"
-              style={{ width: `${loadingProgress}%` }}
-            />
-          </div>
-          
-          <p className="text-gray-500 text-sm font-medium h-6 transition-all duration-300">
-            {loadingMessages[loadingMessageIndex]}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // --- MAIN APP UI ---
-  return (
-    <div className="min-h-screen bg-[#faf9f6] text-gray-800 font-sans selection:bg-rose-200 animate-in fade-in duration-1000">
+    // --- MAIN APP COMPONENT ---
+    function App() {
+      const [isLoading, setIsLoading] = useState(true);
+      const [loadingProgress, setLoadingProgress] = useState(0);
+      const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
       
-      {/* Header */}
-      <header className={`pt-12 pb-8 px-6 text-center transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}>
-        <h1 className="text-3xl md:text-4xl font-serif text-gray-900 tracking-wide mb-2">For You.</h1>
-        <p className="text-gray-500 text-sm md:text-base max-w-md mx-auto">
-          Just a little something I made for you. I really hope you like it :)
-        </p>
-      </header>
+      const [activeTab, setActiveTab] = useState('reasons');
+      const [selectedLetter, setSelectedLetter] = useState(null);
+      const [isLoaded, setIsLoaded] = useState(false);
 
-      {/* Navigation Tabs */}
-      <div className="flex justify-center px-4 mb-8">
-        <div className="bg-white rounded-full p-1 shadow-sm border border-gray-100 inline-flex w-full max-w-sm">
-          <button
-            onClick={() => setActiveTab('reasons')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
-              activeTab === 'reasons' 
-                ? 'bg-rose-50 text-rose-700 shadow-sm' 
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <Calendar size={16} />
-            The Last 30 Days
-          </button>
-          <button
-            onClick={() => setActiveTab('openWhen')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
-              activeTab === 'openWhen' 
-                ? 'bg-rose-50 text-rose-700 shadow-sm' 
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <Mail size={16} />
-            Open When...
-          </button>
-        </div>
-      </div>
+      useEffect(() => {
+        if (!isLoading) {
+          setTimeout(() => setIsLoaded(true), 100);
+          return;
+        }
 
-      {/* Main Content Area */}
-      <main className="max-w-3xl mx-auto px-4 pb-20">
-        
-        {/* TAB 1: The Last 30 Days */}
-        {activeTab === 'reasons' && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center mb-8">
-              <Sparkles className="w-6 h-6 text-rose-300 mx-auto mb-3" />
-              <p className="text-gray-600 leading-relaxed text-sm md:text-base">
-                Over the last 30 days, I took a moment every day to write down one thing I like about you. 
-                I wanted to capture all the little and big things that make you so special to me. 
-                Here they are.
+        const duration = 10500; 
+        const intervalTime = 35; 
+        const steps = duration / intervalTime;
+        let currentStep = 0;
+
+        const timer = setInterval(() => {
+          currentStep++;
+          const currentProgress = Math.min(Math.floor((currentStep / steps) * 100), 100);
+          setLoadingProgress(currentProgress);
+
+          const msgIndex = Math.floor((currentProgress / 100) * (loadingMessages.length - 1));
+          setLoadingMessageIndex(msgIndex);
+
+          if (currentProgress === 100) {
+            clearInterval(timer);
+            setTimeout(() => setIsLoading(false), 600); 
+          }
+        }, intervalTime);
+
+        return () => clearInterval(timer);
+      }, [isLoading]);
+
+      if (isLoading) {
+        return (
+          <div className="min-h-screen bg-[#faf9f6] flex flex-col items-center justify-center p-4 font-sans animate-fade-in">
+            <div className="w-full max-w-xs text-center">
+              <Heart className="w-8 h-8 text-rose-300 mx-auto mb-6 animate-pulse fill-rose-100" />
+              
+              <div className="text-4xl font-serif text-gray-800 mb-2">
+                {loadingProgress}%
+              </div>
+              
+              <div className="w-full h-1.5 bg-gray-200 rounded-full mb-6 overflow-hidden">
+                <div 
+                  className="h-full bg-rose-400 transition-all duration-75 ease-linear rounded-full"
+                  style={{ width: `${loadingProgress}%` }}
+                />
+              </div>
+              
+              <p className="text-gray-500 text-sm font-medium h-6 transition-all duration-300">
+                {loadingMessages[loadingMessageIndex]}
               </p>
             </div>
+          </div>
+        );
+      }
 
-            <div className="space-y-4">
-              {reasons.map((reason, index) => (
-                <div 
-                  key={index} 
-                  className="group bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex gap-4"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-rose-50 text-rose-400 font-serif text-sm">
-                    {index + 1}
-                  </div>
-                  <p className="text-gray-700 leading-relaxed text-sm md:text-base pt-1">
-                    {reason}
+      return (
+        <div className="min-h-screen bg-[#faf9f6] text-gray-800 font-sans selection:bg-rose-200 animate-fade-in">
+          <header className={`pt-12 pb-8 px-6 text-center transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}>
+            <h1 className="text-3xl md:text-4xl font-serif text-gray-900 tracking-wide mb-2">For You.</h1>
+            <p className="text-gray-500 text-sm md:text-base max-w-md mx-auto">
+              Just a little something I made for you. I really hope you like it :)
+            </p>
+          </header>
+
+          <div className="flex justify-center px-4 mb-8">
+            <div className="bg-white rounded-full p-1 shadow-sm border border-gray-100 inline-flex w-full max-w-sm">
+              <button
+                onClick={() => setActiveTab('reasons')}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
+                  activeTab === 'reasons' 
+                    ? 'bg-rose-50 text-rose-700 shadow-sm' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <Calendar size={16} />
+                The Last 30 Days
+              </button>
+              <button
+                onClick={() => setActiveTab('openWhen')}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
+                  activeTab === 'openWhen' 
+                    ? 'bg-rose-50 text-rose-700 shadow-sm' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <Mail size={16} />
+                Open When...
+              </button>
+            </div>
+          </div>
+
+          <main className="max-w-3xl mx-auto px-4 pb-20">
+            {activeTab === 'reasons' && (
+              <div className="space-y-6 animate-slide-up">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center mb-8">
+                  <Sparkles className="w-6 h-6 text-rose-300 mx-auto mb-3" />
+                  <p className="text-gray-600 leading-relaxed text-sm md:text-base">
+                    Over the last 30 days, I took a moment every day to write down one thing I like about you. 
+                    I wanted to capture all the little and big things that make you so special to me. 
+                    Here they are.
                   </p>
                 </div>
-              ))}
-            </div>
-            
-            <div className="text-center py-8">
-              <p className="text-gray-500 italic text-sm">Thank you so much for being you.</p>
-              <Heart className="w-5 h-5 text-rose-300 mx-auto mt-4 fill-rose-100" />
-            </div>
-          </div>
-        )}
 
-        {/* TAB 2: Open When... */}
-        {activeTab === 'openWhen' && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="text-center mb-8 px-4">
-              <p className="text-gray-600 text-sm md:text-base">
-                Tap on an envelope whenever you need a little reminder of me, depending on how you feel.
-              </p>
-            </div>
+                <div className="space-y-4">
+                  {reasons.map((reason, index) => (
+                    <div 
+                      key={index} 
+                      className="group bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex gap-4"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
+                      <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-rose-50 text-rose-400 font-serif text-sm">
+                        {index + 1}
+                      </div>
+                      <p className="text-gray-700 leading-relaxed text-sm md:text-base pt-1">
+                        {reason}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="text-center py-8">
+                  <p className="text-gray-500 italic text-sm">Thank you so much for being you.</p>
+                  <Heart className="w-5 h-5 text-rose-300 mx-auto mt-4 fill-rose-100" />
+                </div>
+              </div>
+            )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {openWhenLetters.map((letter) => (
-                <button
-                  key={letter.id}
-                  onClick={() => setSelectedLetter(letter)}
-                  className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 text-left flex flex-col items-center justify-center text-center gap-3 group active:scale-95"
+            {activeTab === 'openWhen' && (
+              <div className="animate-slide-up">
+                <div className="text-center mb-8 px-4">
+                  <p className="text-gray-600 text-sm md:text-base">
+                    Tap on an envelope whenever you need a little reminder of me, depending on how you feel.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {openWhenLetters.map((letter) => (
+                    <button
+                      key={letter.id}
+                      onClick={() => setSelectedLetter(letter)}
+                      className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 text-left flex flex-col items-center justify-center text-center gap-3 group active:scale-95"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-rose-50 transition-colors duration-300">
+                        <Mail className="w-6 h-6 text-gray-400 group-hover:text-rose-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-1">Open when</h3>
+                        <p className="text-gray-800 font-medium">{letter.condition}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </main>
+
+          <footer className="text-center py-6 text-xs text-gray-400">
+            Made with <Heart className="inline w-3 h-3 text-rose-400" /> by Meet
+          </footer>
+
+          {selectedLetter && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-fade-in">
+              <div 
+                className="absolute inset-0" 
+                onClick={() => setSelectedLetter(null)}
+              />
+              <div className={`relative w-full max-w-sm rounded-[2rem] p-6 md:p-8 shadow-xl animate-zoom-in ${selectedLetter.color} bg-white border`} onClick={(e) => e.stopPropagation()}>
+                <button 
+                  onClick={() => setSelectedLetter(null)}
+                  className="absolute top-4 right-4 p-2 rounded-full hover:bg-black/5 transition-colors"
                 >
-                  <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-rose-50 transition-colors duration-300">
-                    <Mail className="w-6 h-6 text-gray-400 group-hover:text-rose-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-1">Open when</h3>
-                    <p className="text-gray-800 font-medium">{letter.condition}</p>
-                  </div>
+                  <X className="w-5 h-5 opacity-50" />
                 </button>
-              ))}
+                
+                <div className="mb-6 flex justify-center">
+                  <MailOpen className="w-10 h-10 opacity-70" />
+                </div>
+                
+                <h2 className="text-center text-sm uppercase tracking-widest opacity-60 font-semibold mb-6">
+                  When {selectedLetter.condition}
+                </h2>
+                
+                <div className="text-center text-base md:text-lg leading-relaxed opacity-90 font-serif whitespace-pre-line">
+                  {selectedLetter.message}
+                </div>
+                
+                <div className="mt-8 flex justify-center">
+                  <Heart className="w-6 h-6 opacity-40 fill-current" />
+                </div>
+              </div>
             </div>
-          </div>
-        )}
-
-      </main>
-
-      {/* Footer */}
-      <footer className="text-center py-6 text-xs text-gray-400">
-        Made with <Heart className="inline w-3 h-3 text-rose-400" /> by Meet
-      </footer>
-
-      {/* Modal for "Open When" Letters */}
-      {selectedLetter && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div 
-            className="absolute inset-0" 
-            onClick={() => setSelectedLetter(null)}
-          />
-          <div className={`relative w-full max-w-sm rounded-[2rem] p-6 md:p-8 shadow-xl animate-in zoom-in-95 duration-300 ${selectedLetter.color} bg-white border`} onClick={(e) => e.stopPropagation()}>
-            <button 
-              onClick={() => setSelectedLetter(null)}
-              className="absolute top-4 right-4 p-2 rounded-full hover:bg-black/5 transition-colors"
-            >
-              <X className="w-5 h-5 opacity-50" />
-            </button>
-            
-            <div className="mb-6 flex justify-center">
-              <MailOpen className="w-10 h-10 opacity-70" />
-            </div>
-            
-            <h2 className="text-center text-sm uppercase tracking-widest opacity-60 font-semibold mb-6">
-              When {selectedLetter.condition}
-            </h2>
-            
-            <div className="text-center text-base md:text-lg leading-relaxed opacity-90 font-serif whitespace-pre-line">
-              {selectedLetter.message}
-            </div>
-            
-            <div className="mt-8 flex justify-center">
-              <Heart className="w-6 h-6 opacity-40 fill-current" />
-            </div>
-          </div>
+          )}
         </div>
-      )}
-    </div>
-  );
-}
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
