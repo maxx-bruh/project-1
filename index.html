@@ -1,401 +1,305 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>For You</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Nunito:wght@400;600;700&display=swap");
+import React, { useState, useEffect } from 'react';
+import { Heart, Mail, MailOpen, X, Calendar, Sparkles, Lock, KeyRound } from 'lucide-react';
 
-      body {
-        font-family: "Nunito", sans-serif;
-        background-color: #eff6ff; /* Blue-50 */
-        overflow-x: hidden;
+// The 30 things you like about her
+const reasons = [
+  "I like how you understand me, from little things to big ones.",
+  "I really like your smile. It's just so calming and cute.",
+  "I like how you are randomly nice to me sometimes, but then you're like \"No I should stay mean\" lol.",
+  "I like that no matter what, whenever we call, you laugh and have fun with me.",
+  "I like your voice. Sometimes I randomly remember you laughing or telling me something, and it just makes me smile.",
+  "I like how you say \"bhak\", \"chhi\" and send those beating stickers, but then also send pats and hugs when I need it the most.",
+  "I like when you worry about me or tell me to do things the right way, even though at the end you say \"anyway it's up to you,\" but it still shows how much you care.",
+  "I like when you try to be expressive, even if it’s just through stickers.",
+  "I like how after a bad day, when I tell you to share things, you say \"no it's nothing,\" but then share it anyway.",
+  "I like how you straight up tell me things that need to be said. I'm trying to do it more and more as well.",
+  "I like how you're always ready to spend time with me.",
+  "I like how mature and straightforward you are.",
+  "I like when you give me small updates about your day/life.",
+  "I like that even when you're so frustrated, you always choose to talk things out instead of staying angy.",
+  "I like how you listen to my opinions about things in your life.",
+  "I like how comfortable I feel talking to you. Whether it’s calls or texts, you make everything feel easy and fun.",
+  "I like that I don’t have to pretend to be someone else around you. I just be myself and say what's in my mind.",
+  "I like how you make normal conversations feel so special.",
+  "I like how talking with you brings a smile to my face. Even right now, while writing this, the thought of you makes me happy.",
+  "I like the way you text when you’re half sleepy. You seem totally normal, but I can just feel like you’re about to say \"I’m gonna sleep, good ninni\" lol.",
+  "I like how you sit through even when I'm being a bit annoying. Tbh it's quite fun to annoy you sometimes.",
+  "I like how you say \"No\" whenever I ask for kisses or Mwah. Love your random reactions.",
+  "I like how even after a bad day, talking with you makes me feel better.",
+  "I like when you bring up those serious conversations when you feel like they are important, and I love how it increases understanding between us.",
+  "I like how you never let me win any argument. Nerd, I'll win one day.",
+  "I like how you’ve become a part of my daily routine, the first person I think about just after waking up.",
+  "I like how you keep your boundaries and respect others' as well.",
+  "I really like how you remember small things about me or something that we talk about. Love it when you mention those.",
+  "I like how time goes super fast when I'm talking with you. Only my mom screaming or dad's side-eye can stop it lol.",
+  "I really like when you tell me that you like me. I know it's just words, but you show it with actions as well. It just feels so genuine, calm, and real."
+];
+
+// Pre-filled "Open When" messages
+const openWhenLetters = [
+  {
+    id: 1,
+    condition: "you're feeling sad",
+    message: "Hey...\n\nI know you'll probably say 'I'm fine', but I can tell when you're not.\n\nDon't try to fix everything right now. Just sit with it for a bit... I'm right here with you.\n\n(And yes, you're getting a hug whether you want it or not 🫂)",
+    color: "bg-blue-50 text-blue-800 border-blue-200"
+  },
+  {
+    id: 2,
+    condition: "you miss me",
+    message: "I know you won't, but if you actually are then damn...\n\nGood. As you should.\n\nOf course... I miss you too, cutiepie.\nCome text me instead of just sitting there thinking 😤",
+    color: "bg-rose-50 text-rose-800 border-rose-200"
+  },
+  {
+    id: 3,
+    condition: "you're stressed",
+    message: "Okay, pause.\n\nBreathe first... not everything needs to be handled in one go.\nThoda sa break le le... the world won't collapse.\n\nAnd if it does... we'll blame you (just kidding!)\n\nRemember, if it's meant to happen, it will happen anyway.",
+    color: "bg-amber-50 text-amber-800 border-amber-200"
+  },
+  {
+    id: 4,
+    condition: "you can't sleep",
+    message: "Why are you still awake bro, go sleep!\n\nOkay fine...\n\nClose your eyes, and stop thinking about 50 random things.\n\nAnd if you're still not sleeping... text me, I'll annoy you till you pass out (believe me 😌)",
+    color: "bg-indigo-50 text-indigo-800 border-indigo-200"
+  },
+  {
+    id: 5,
+    condition: "you're angry at me",
+    message: "Okay... first of all, don't stay angry for too long!\n\nBut also... I get it.\n\nIf I messed up, I'll fix it. Just don't go silent on me... I'd rather we fight a little than feel distant.",
+    color: "bg-red-50 text-red-800 border-red-200"
+  },
+  {
+    id: 6,
+    condition: "you need to smile",
+    message: "SMILE.\n\nIf this didn't make you smile... then I know what will. Remember when I asked what made you happy recently, and you said balloons? 🎈\n\nNow smile.\nYes, right now.\n\nGood. See? Not that hard.",
+    color: "bg-emerald-50 text-emerald-800 border-emerald-200"
+  }
+];
+
+const loadingMessages = [
+  "Gathering all the smiles...",
+  "Increasing cuteness levels...",
+  "Cooking up thoughts...",
+  "Finding the perfect words...",
+  "Packing extra hugs...",
+  "Waking up the butterflies...",
+  "Almost ready..."
+];
+
+export default function App() {
+  // App State
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+  
+  const [activeTab, setActiveTab] = useState('reasons');
+  const [selectedLetter, setSelectedLetter] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // If not loading anymore, trigger the main page fade-in
+    if (!isLoading) {
+      setTimeout(() => setIsLoaded(true), 100);
+      return;
+    }
+
+    const duration = 10500; // Increased from 3500 to 10500 (10.5 seconds) so she can read them!
+    const intervalTime = 35; // Update every 35ms
+    const steps = duration / intervalTime;
+    let currentStep = 0;
+
+    const timer = setInterval(() => {
+      currentStep++;
+      const currentProgress = Math.min(Math.floor((currentStep / steps) * 100), 100);
+      setLoadingProgress(currentProgress);
+
+      // Update message based on how far along the progress is
+      const msgIndex = Math.floor((currentProgress / 100) * (loadingMessages.length - 1));
+      setLoadingMessageIndex(msgIndex);
+
+      if (currentProgress === 100) {
+        clearInterval(timer);
+        setTimeout(() => setIsLoading(false), 600); // Brief pause at 100%
       }
+    }, intervalTime);
 
-      .cursive {
-        font-family: "Dancing Script", cursive;
-      }
+    return () => clearInterval(timer);
+  }, [isLoading]);
 
-      .page {
-        display: none;
-        opacity: 0;
-        transition: opacity 0.5s ease-in-out;
-      }
-
-      .page.active {
-        display: flex;
-        opacity: 1;
-      }
-
-      /* Floating hearts animation background */
-      .heart-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 0;
-        overflow: hidden;
-      }
-
-      .floating-heart {
-        position: absolute;
-        bottom: -20px;
-        color: rgba(59, 130, 246, 0.2); /* Blue tint */
-        animation: floatUp 15s linear infinite;
-      }
-
-      @keyframes floatUp {
-        0% {
-          transform: translateY(0) rotate(0deg);
-          opacity: 0;
-        }
-        10% {
-          opacity: 1;
-        }
-        90% {
-          opacity: 1;
-        }
-        100% {
-          transform: translateY(-100vh) rotate(360deg);
-          opacity: 0;
-        }
-      }
-
-      /* LOCK SCREEN STYLES */
-      #lockScreen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #eff6ff;
-        z-index: 50;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition: opacity 0.5s ease;
-      }
-
-      #mainContent {
-        opacity: 0;
-        transition: opacity 1s ease;
-      }
-    </style>
-  </head>
-  <body class="min-h-screen flex items-center justify-center p-4 relative">
-    <!-- === LOCK SCREEN === -->
-    <div id="lockScreen">
-      <div
-        class="bg-white p-8 rounded-2xl shadow-xl text-center max-w-xs w-full border border-blue-200"
-      >
-        <div class="text-blue-500 text-4xl mb-4">
-          <i class="fa-solid fa-lock"></i>
-        </div>
-        <h2 class="text-xl font-bold text-gray-700 mb-2">Locked</h2>
-        <p class="text-gray-500 text-sm mb-4">Enter the code to.</p>
-
-        <input
-          type="password"
-          id="passInput"
-          placeholder="Code..."
-          class="w-full px-4 py-2 rounded-lg border border-blue-200 focus:outline-none focus:border-blue-500 mb-4 text-center"
-        />
-
-        <button
-          onclick="checkPassword()"
-          class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          Unlock
-        </button>
-        <p id="errorMsg" class="text-red-500 text-xs mt-2 hidden">
-          Wrong code, try again.
-        </p>
-      </div>
-    </div>
-
-    <!-- === MAIN CONTENT (Initially Hidden) === -->
-    <div id="mainContent" class="w-full flex items-center justify-center">
-      <!-- Background Hearts -->
-      <div class="heart-bg" id="heartBg"></div>
-
-      <!-- Main Container -->
-      <div
-        class="bg-white/90 backdrop-blur-sm w-full max-w-md h-[85vh] rounded-3xl shadow-2xl overflow-hidden relative border border-blue-200 z-10 flex flex-col"
-      >
-        <!-- Progress Bar -->
-        <div class="w-full bg-blue-100 h-2">
-          <div
-            id="progressBar"
-            class="bg-blue-600 h-2 transition-all duration-500"
-            style="width: 20%"
-          ></div>
-        </div>
-
-        <!-- PAGE 1: Intro -->
-        <div
-          id="page1"
-          class="page active flex-col items-center justify-center h-full p-6 text-center relative"
-        >
-          <div class="mb-6 text-blue-600 text-6xl animate-bounce">
-            <i class="fa-solid fa-envelope-open-text"></i>
+  // --- LOADING SCREEN UI ---
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#faf9f6] flex flex-col items-center justify-center p-4 font-sans">
+        <div className="w-full max-w-xs text-center animate-in fade-in duration-500">
+          <Heart className="w-8 h-8 text-rose-300 mx-auto mb-6 animate-pulse fill-rose-100" />
+          
+          <div className="text-4xl font-serif text-gray-800 mb-2">
+            {loadingProgress}%
           </div>
-          <h1 class="text-3xl font-bold text-gray-800 mb-4">Hi Sweta</h1>
-
-          <button
-            onclick="nextPage(2)"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
-          >
-            Next <i class="fa-solid fa-arrow-right ml-2"></i>
-          </button>
-        </div>
-
-        <!-- PAGE 2: The Feelings -->
-        <div
-          id="page2"
-          class="page flex-col items-center justify-center h-full p-6 text-center relative"
-        >
-          <h2 class="text-2xl font-bold text-blue-700 mb-6 cursive">
-            Just a few things...
-          </h2>
-          <div
-            class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 overflow-y-auto max-h-[50vh]"
-          >
-            <p class="text-lg text-center mt-4">
-              I take a little time to understand people and situations properly.
-              Sometimes I miss things at first, but I’m learning and trying to
-              get better at it.
-            </p>
-            <p class="text-lg text-center mt-4">
-              I value honesty and being myself rather than acting a certain way
-              to fit in. I’m learning how to keep have proper boundaries as well
-              tho I don’t always get it right, but I do try to learn from it.
-            </p>
-          </div>
-
-          <div class="flex gap-4">
-            <button
-              onclick="prevPage(1)"
-              class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
-            >
-              Back
-            </button>
-            <button
-              onclick="nextPage(3)"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
-            >
-              Continue <i class="fa-solid fa-heart ml-2"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- PAGE 3: The Photo -->
-        <div
-          id="page3"
-          class="page flex-col items-center justify-center h-full p-6 text-center relative"
-        >
-          <h2 class="text-2xl font-bold text-gray-800 mb-4">Stupid me 👇</h2>
-
-          <div
-            class="relative w-64 h-64 mx-auto mb-6 rounded-2xl overflow-hidden shadow-xl border-4 border-white rotate-3 hover:rotate-0 transition-transform duration-500"
-          >
-            <img
-              src="https://github.com/meet-afk/meet-afk.github.io/blob/main/Assets/pfp/me.jpg?raw=true"
-              alt="Us"
-              class="w-full h-full object-cover"
+          
+          {/* Progress Bar */}
+          <div className="w-full h-1.5 bg-gray-200 rounded-full mb-6 overflow-hidden">
+            <div 
+              className="h-full bg-rose-400 transition-all duration-75 ease-linear rounded-full"
+              style={{ width: `${loadingProgress}%` }}
             />
           </div>
-
-          <p class="text-gray-600 mb-8 px-4">
-            This is how I look most days unless it’s Sunday and I’ve washed my
-            hair 😭.
+          
+          <p className="text-gray-500 text-sm font-medium h-6 transition-all duration-300">
+            {loadingMessages[loadingMessageIndex]}
           </p>
-
-          <div class="flex gap-4">
-            <button
-              onclick="prevPage(2)"
-              class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
-            >
-              Back
-            </button>
-            <button
-              onclick="nextPage(4)"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
-            >
-              More <i class="fa-solid fa-arrow-right ml-2"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- PAGE 4: Extra Message (NEW PAGE) -->
-        <div
-          id="page4"
-          class="page flex-col items-center justify-center h-full p-6 text-center relative"
-        >
-          <h2 class="text-2xl font-bold text-blue-700 mb-6 cursive">
-            And also...
-          </h2>
-          <div
-            class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 overflow-y-auto max-h-[50vh]"
-          >
-            <p class="text-lg text-center mt-4">
-              I really like talking to you. Even when we end up arguing (which
-              is mostly me ~ proudly said), it’s still fun.
-            </p>
-            <p class="text-lg text-center mt-4">
-              I’d love to know you better, the good parts, the bad parts, and
-              even the extreme ones. No pressure, of course.
-            </p>
-            <p class="text-lg text-center mt-4">
-              I just want to say that I really like you, not to keep you around,
-              not out of fear of losing you. I genuinely do.
-            </p>
-          </div>
-
-          <div class="flex gap-4">
-            <button
-              onclick="prevPage(3)"
-              class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
-            >
-              Back
-            </button>
-            <button
-              onclick="nextPage(5)"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
-            >
-              One last thing <i class="fa-solid fa-star ml-2"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- PAGE 5: The Question (Final Page) -->
-        <div
-          id="page5"
-          class="page flex-col items-center justify-center h-full p-6 text-center relative"
-        >
-          <!-- Paragraph Text Box -->
-          <div
-            class="bg-white p-6 rounded-xl shadow-inner mb-8 text-gray-700 leading-relaxed text-left border-l-4 border-blue-400 w-full"
-          >
-            <p class="text-lg text-center mt-4">
-              I’m not asking you to decide anything right now. I just wanted you
-              to know me properly, without assumptions or surprises. If you feel
-              like talking about this, you can tell me whenever you want. If
-              not, that’s okay too.
-            </p>
-          </div>
-
-          <div class="flex gap-4">
-            <button
-              onclick="prevPage(4)"
-              class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-full shadow transform transition hover:scale-105"
-            >
-              Back
-            </button>
-          </div>
         </div>
       </div>
+    );
+  }
+
+  // --- MAIN APP UI ---
+  return (
+    <div className="min-h-screen bg-[#faf9f6] text-gray-800 font-sans selection:bg-rose-200 animate-in fade-in duration-1000">
+      
+      {/* Header */}
+      <header className={`pt-12 pb-8 px-6 text-center transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}>
+        <h1 className="text-3xl md:text-4xl font-serif text-gray-900 tracking-wide mb-2">For You.</h1>
+        <p className="text-gray-500 text-sm md:text-base max-w-md mx-auto">
+          Just a little something I made for you. I really hope you like it :)
+        </p>
+      </header>
+
+      {/* Navigation Tabs */}
+      <div className="flex justify-center px-4 mb-8">
+        <div className="bg-white rounded-full p-1 shadow-sm border border-gray-100 inline-flex w-full max-w-sm">
+          <button
+            onClick={() => setActiveTab('reasons')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
+              activeTab === 'reasons' 
+                ? 'bg-rose-50 text-rose-700 shadow-sm' 
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <Calendar size={16} />
+            The Last 30 Days
+          </button>
+          <button
+            onClick={() => setActiveTab('openWhen')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-full text-sm font-medium transition-all duration-300 ${
+              activeTab === 'openWhen' 
+                ? 'bg-rose-50 text-rose-700 shadow-sm' 
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <Mail size={16} />
+            Open When...
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <main className="max-w-3xl mx-auto px-4 pb-20">
+        
+        {/* TAB 1: The Last 30 Days */}
+        {activeTab === 'reasons' && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center mb-8">
+              <Sparkles className="w-6 h-6 text-rose-300 mx-auto mb-3" />
+              <p className="text-gray-600 leading-relaxed text-sm md:text-base">
+                Over the last 30 days, I took a moment every day to write down one thing I like about you. 
+                I wanted to capture all the little and big things that make you so special to me. 
+                Here they are.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {reasons.map((reason, index) => (
+                <div 
+                  key={index} 
+                  className="group bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex gap-4"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-rose-50 text-rose-400 font-serif text-sm">
+                    {index + 1}
+                  </div>
+                  <p className="text-gray-700 leading-relaxed text-sm md:text-base pt-1">
+                    {reason}
+                  </p>
+                </div>
+              ))}
+            </div>
+            
+            <div className="text-center py-8">
+              <p className="text-gray-500 italic text-sm">Thank you so much for being you.</p>
+              <Heart className="w-5 h-5 text-rose-300 mx-auto mt-4 fill-rose-100" />
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: Open When... */}
+        {activeTab === 'openWhen' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="text-center mb-8 px-4">
+              <p className="text-gray-600 text-sm md:text-base">
+                Tap on an envelope whenever you need a little reminder of me, depending on how you feel.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {openWhenLetters.map((letter) => (
+                <button
+                  key={letter.id}
+                  onClick={() => setSelectedLetter(letter)}
+                  className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 text-left flex flex-col items-center justify-center text-center gap-3 group active:scale-95"
+                >
+                  <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-rose-50 transition-colors duration-300">
+                    <Mail className="w-6 h-6 text-gray-400 group-hover:text-rose-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-1">Open when</h3>
+                    <p className="text-gray-800 font-medium">{letter.condition}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* Footer */}
+      <footer className="text-center py-6 text-xs text-gray-400">
+        Made with <Heart className="inline w-3 h-3 text-rose-400" /> by Meet
+      </footer>
+
+      {/* Modal for "Open When" Letters */}
+      {selectedLetter && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div 
+            className="absolute inset-0" 
+            onClick={() => setSelectedLetter(null)}
+          />
+          <div className={`relative w-full max-w-sm rounded-[2rem] p-6 md:p-8 shadow-xl animate-in zoom-in-95 duration-300 ${selectedLetter.color} bg-white border`} onClick={(e) => e.stopPropagation()}>
+            <button 
+              onClick={() => setSelectedLetter(null)}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-black/5 transition-colors"
+            >
+              <X className="w-5 h-5 opacity-50" />
+            </button>
+            
+            <div className="mb-6 flex justify-center">
+              <MailOpen className="w-10 h-10 opacity-70" />
+            </div>
+            
+            <h2 className="text-center text-sm uppercase tracking-widest opacity-60 font-semibold mb-6">
+              When {selectedLetter.condition}
+            </h2>
+            
+            <div className="text-center text-base md:text-lg leading-relaxed opacity-90 font-serif whitespace-pre-line">
+              {selectedLetter.message}
+            </div>
+            
+            <div className="mt-8 flex justify-center">
+              <Heart className="w-6 h-6 opacity-40 fill-current" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-
-    <script>
-      // === CONFIGURATION ===
-      const PASS_CODE = "110125"; // CHANGE THIS to whatever password you want her to use
-
-      // STATE
-      let currentPage = 1;
-      const totalPages = 5;
-
-      // === PASSWORD LOGIC ===
-      function checkPassword() {
-        const input = document.getElementById("passInput");
-        const lockScreen = document.getElementById("lockScreen");
-        const mainContent = document.getElementById("mainContent");
-        const errorMsg = document.getElementById("errorMsg");
-
-        if (input.value === PASS_CODE) {
-          // Unlock
-          lockScreen.style.opacity = "0";
-          setTimeout(() => {
-            lockScreen.style.display = "none";
-            mainContent.style.opacity = "1";
-            createHearts(); // Start animation only after unlock
-          }, 500);
-        } else {
-          // Wrong password
-          errorMsg.classList.remove("hidden");
-          input.classList.add("border-red-500");
-          input.value = "";
-        }
-      }
-
-      // ANIMATION BACKGROUND
-      function createHearts() {
-        const container = document.getElementById("heartBg");
-        const heartCount = 15;
-        for (let i = 0; i < heartCount; i++) {
-          const heart = document.createElement("div");
-          heart.classList.add("floating-heart");
-          heart.innerHTML = '<i class="fa-solid fa-heart"></i>';
-          heart.style.left = Math.random() * 100 + "vw";
-          heart.style.animationDuration = Math.random() * 10 + 10 + "s";
-          heart.style.fontSize = Math.random() * 20 + 10 + "px";
-          container.appendChild(heart);
-        }
-      }
-
-      // NAVIGATION
-      function updateProgress() {
-        const progress = (currentPage / totalPages) * 100;
-        document.getElementById("progressBar").style.width = `${progress}%`;
-      }
-
-      function nextPage(pageNumber) {
-        const current = document.querySelector(".page.active");
-        current.classList.remove("active");
-
-        setTimeout(() => {
-          current.style.display = "none";
-
-          const next = document.getElementById(`page${pageNumber}`);
-          next.style.display = "flex";
-          void next.offsetWidth;
-          next.classList.add("active");
-
-          currentPage = pageNumber;
-          updateProgress();
-        }, 500);
-      }
-
-      function prevPage(pageNumber) {
-        const current = document.querySelector(".page.active");
-        current.classList.remove("active");
-
-        setTimeout(() => {
-          current.style.display = "none";
-
-          const prev = document.getElementById(`page${pageNumber}`);
-          prev.style.display = "flex";
-          void prev.offsetWidth;
-          prev.classList.add("active");
-
-          currentPage = pageNumber;
-          updateProgress();
-        }, 500);
-      }
-
-      // INITIALIZATION
-      window.onload = () => {
-        updateProgress();
-        // Note: createHearts() is now called inside checkPassword() so it starts only after unlock
-      };
-    </script>
-  </body>
-</html>
+  );
+}
